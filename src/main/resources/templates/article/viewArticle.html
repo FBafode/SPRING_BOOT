@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" rel="stylesheet">
+</head>
+<body class="bg-info.bg-gradient">
+
+
+
+<div class="container">
+<header th:insert="~{navbar/header::nav}"></header>
+<div class="">
+
+<h3>Article : <span th:text="${articles.titre}"></span></h3>
+	
+	<ul class="list-group list-group-flush">
+	
+	<li class="list-group-item">Photos :<img th:src="/@{${articles.photosImagePath}}" /> </li>
+	<li class="list-group-item">Resume :<span th:text="${articles.resume}"></span> </li>
+	<li class="list-group-item">Contenu :<span th:text="${articles.contenu}"></span> </li>
+	<li class="list-group-item">Date de création :<span th:text="${articles.dateCreation}"></span> </li>
+	<li class="list-group-item">Auteur :<span th:text="${articles.user.prenom}"></span> </li>
+	
+	</ul>
+</div>
+
+<hr>
+<div sec:authorize="hasAnyAuthority('EDITOR','ADMIN')">
+
+<form method="post" th:object="${articles}" th:action="@{/artic/}+${articles.id}" enctype="multipart/form-data">
+	  <div class="mb-3">
+	    <label for="exampleInputEmail1" class="form-label">Titre Article</label>
+	    <input type="text" class="form-control" id="titre" th:field="*{titre}"/>
+	    	<div class="alert alert-danger"  th:if="${#fields.hasErrors('titre')}" th:errors="*{titre}"></div>
+	  </div>
+	  <div class="mb-3">
+	    <label for="exampleInputEmail1" class="form-label">Résumé</label>
+	    <input type="text" class="form-control" id="resume" th:field="*{resume}"/>
+	    	<div class="alert alert-danger"  th:if="${#fields.hasErrors('resume')}" th:errors="*{resume}"></div>
+	  </div>
+	  <div class="mb-3">
+	    <label for="exampleInputEmail1" class="form-label">Saisir contenu</label>
+	    <textarea   class="form-control input-sm" id="contenu" th:field="*{contenu}"></textarea>
+	    	<div class="alert alert-danger"  th:if="${#fields.hasErrors('contenu')}" th:errors="*{contenu}"></div>
+	  </div>
+	    <div class="mb-3">
+	    <label for="exampleInputEmail1" class="form-label">Saisir date</label>
+	    <input type="date"   class="form-control input-sm" id="dateCreation" th:field="*{dateCreation}"/>
+	    	<div class="alert alert-danger"  th:if="${#fields.hasErrors('dateCreation')}" th:errors="*{dateCreation}"></div>
+	    	
+	  </div>
+	   <div class="mb-3">
+	    <label for="exampleInputEmail1" class="form-label">Charger image</label>
+	    <input type="file"  name="photos" accept="image/png, image/jpeg" class="form-control input-sm" id="iphotos" th:field="*{photos}"/>
+	    	<div class="alert alert-danger"  th:if="${#fields.hasErrors('photos')}" th:errors="*{photos}"></div>
+	  </div>
+	  <button type="submit" class="btn btn-primary">Ajouter article</button>
+	</form>
+
+
+</div>
+ 
+</div>
