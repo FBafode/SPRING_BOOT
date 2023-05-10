@@ -1,6 +1,11 @@
 
 package com.afpa.employes.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.Optional;
 
@@ -9,18 +14,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.afpa.employes.bean.Article;
-
 import com.afpa.employes.repository.ArticleRepository;
+
 
 @Service
 public class ArticleService {
 	
 	@Autowired
 	private ArticleRepository articleRepository;
-	
-	
 	
 	public Article ajoutArticle(Article article, BindingResult bindingresult, @RequestParam("id") Optional<Long> id){
 		
@@ -40,9 +44,7 @@ public class ArticleService {
 			
 			articleRepository.save(article);
 		}
-			
-		return article;
-			
+		return article;	
 	}
 	
 	
@@ -77,12 +79,30 @@ public class ArticleService {
 			return true;
 		}
 		return false;
-	
-	
-	
 	}
 
+	//UPLOADS IMAGE
 
+			public void uploadsImage(String uploadDir, String fileName,
+		            MultipartFile multipartFile) throws IOException {
+				
+		        Path uploadPath = Paths.get(uploadDir);
+		         
+		        //Check if exist
+		        if (!Files.exists(uploadPath)) {
+		        	System.err.println("Not EXISTS");
+		        	
+		            Files.createDirectories(uploadPath);
+		        }
+		         
+		        try  {
+		            Path filePath = uploadPath.resolve(fileName);
+		            Files.copy(multipartFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+		            
+		        } catch (IOException ioe) {        
+		            throw new IOException("Oups : " + fileName, ioe);
+		        }
+		}
 	
 
 }

@@ -106,7 +106,7 @@ public class Article {
 	    public String getPhotosImagePath() {
 	        if (photos == null || id == null) return null;
 	         
-	        return "/uploads/img" + id + "/" + photos;
+	        return "/upload" +  "/" + photos;
 	    }
 
 }
