@@ -18,7 +18,9 @@
 	
 	<ul class="list-group list-group-flush">
 	
-	<li class="list-group-item">Photos :<img th:src="/@{${articles.photosImagePath}}" /> </li>
+	<li class="list-group-item">Photos :<img th:src="${articles.getPhotosImagePath()}" /> </li>
+	
+	<li class="list-group-item">Titre :<span th:text="${articles.Titre}"></span> </li>
 	<li class="list-group-item">Resume :<span th:text="${articles.resume}"></span> </li>
 	<li class="list-group-item">Contenu :<span th:text="${articles.contenu}"></span> </li>
 	<li class="list-group-item">Date de création :<span th:text="${articles.dateCreation}"></span> </li>
@@ -28,7 +30,10 @@
 </div>
 
 <hr>
-<div sec:authorize="hasAnyAuthority('EDITOR','ADMIN')">
+
+<div sec:authorize="hasAnyAuthority('EDITOR','ADMIN')" class="bg-info bg-gradient">
+
+<h3> Formulaire de mise à jour de l'article</h3>
 
 <form method="post" th:object="${articles}" th:action="@{/artic/}+${articles.id}" enctype="multipart/form-data">
 	  <div class="mb-3">
@@ -52,12 +57,16 @@
 	    	<div class="alert alert-danger"  th:if="${#fields.hasErrors('dateCreation')}" th:errors="*{dateCreation}"></div>
 	    	
 	  </div>
-	   <div class="mb-3">
+	  
+	  <div class="mb-3">
 	    <label for="exampleInputEmail1" class="form-label">Charger image</label>
-	    <input type="file"  name="photos" accept="image/png, image/jpeg" class="form-control input-sm" id="iphotos" th:field="*{photos}"/>
-	    	<div class="alert alert-danger"  th:if="${#fields.hasErrors('photos')}" th:errors="*{photos}"></div>
-	  </div>
-	  <button type="submit" class="btn btn-primary">Ajouter article</button>
+	    <input type="hidden"  name="photos" accept="image/png, image/jpeg" class="form-control input-sm" id="photos" th:field="*{photos}"/>
+	    <input type="file"  name="image" accept="image/png, image/jpeg" class="form-control input-sm"/>
+	    	<div class="alert alert-danger"  th:if="${#fields.hasErrors('photos')}" th:errors="*{photos'}"></div>
+	  </div> 
+	  
+	  
+	  <button type="submit" class="btn btn-primary">Mettre à jour l'article</button>
 	</form>
 
 

@@ -6,6 +6,7 @@ import java.util.Optional;
 import javax.management.AttributeNotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -95,10 +96,6 @@ public class ArticleController {
 	public String article(@Validated Article article, BindingResult bindingResult, Model model, HttpSession session ,@RequestParam("id") Optional<Long> id, @RequestParam("image") MultipartFile multipartFile) throws IOException {
 		
 		
-		String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
-        article.setPhotos(fileName);
-		
-		
 		if(bindingResult.hasErrors()) {
 			
 			getArticleList(model);
@@ -110,7 +107,7 @@ public class ArticleController {
 			
 			String username = ((UserLogin)SecurityContextHolder.getContext().getAuthentication().getPrincipal()).getUsername();
 			
-			if (username != null) {
+			if (username != null && !multipartFile.isEmpty()) {
 				//Instancie un nouvel object user avec le mail de user connecté
 				
 				User user =new User();
@@ -124,19 +121,26 @@ public class ArticleController {
 				
 				article.setUser(user);
 				
-				
+				String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+		        article.setPhotos(fileName);
+		        
+		        try {
+		        	//DESTINATION
+					//String uploadDir = "static/images/" +article.getTitre();
+					String destination = new ClassPathResource("/src/main/resources/static/upload").getPath();
+					
+					articleService.uploadsImage(destination, fileName, multipartFile);
+		        	
+		        }catch(IOException e) {
+		        	
+		        	e.printStackTrace();
+		        }
 				
 				session.setAttribute("add", "L''article  " + article.getTitre() + " a bien été ajouté");
 				
-				articleService.addArticle(article);
-				
-				String uploadDir = "uploads/img/"+ article.getId();
-				
-				FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+				articleService.addArticle(article);	
 				
 			}
-			
-			model.addAttribute("msg",article);
 			
 			return "redirect:/artic";
 		}
@@ -171,7 +175,7 @@ public class ArticleController {
 
 		//TRAITEMENT DE L'UPDATE
 	@PostMapping("artic/{id}")
-	public String update(@PathVariable(value = "id") Long id, @Validated Article articleDetails, BindingResult bindingResult, HttpSession session) throws AttributeNotFoundException{
+	public String update(@PathVariable(value = "id") Long id, @Validated Article articleDetails, BindingResult bindingResult, HttpSession session, @RequestParam("image") MultipartFile multipartFile) throws AttributeNotFoundException{
 		
 		System.err.println(articleDetails.getTitre());
 		System.err.println(articleDetails.getResume());
@@ -192,6 +196,8 @@ public class ArticleController {
 		article.setContenu(articleDetails.getContenu());
 		article.setDateCreation(articleDetails.getDateCreation());
 		
+		//article.setPhotos(articleDetails.getPhotos());
+		
 		
 	//Rajouter le user
  	// Recuperation du nom du User connecté
@@ -209,6 +215,23 @@ public class ArticleController {
 			
 			
 			article.setUser(user);
+			
+			
+			String fileName = StringUtils.cleanPath(multipartFile.getOriginalFilename());
+	        article.setPhotos(fileName);
+	        
+	        try {
+	        	//DESTINATION
+				//String uploadDir = "static/images/" +article.getTitre();
+				String destination = new ClassPathResource("/src/main/resources/static/upload").getPath();
+				
+				articleService.uploadsImage(destination, fileName, multipartFile);
+	        	
+	        }catch(IOException e) {
+	        	
+	        	e.printStackTrace();
+	        }
+			
 			
 			session.setAttribute("update", "L''article  " + article.getTitre() + " a bien été modifié");
 			

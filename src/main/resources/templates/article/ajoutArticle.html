@@ -31,6 +31,15 @@
 	    <input type="date"   class="form-control input-sm" id="dateCreation" th:field="*{dateCreation}"/>
 	    	<div class="alert alert-danger"  th:if="${#fields.hasErrors('dateCreation')}" th:errors="*{dateCreation}"></div>
 	  </div>
+	  
+	  <div class="mb-3">
+	    <label for="exampleInputEmail1" class="form-label">Charger image</label>
+	    <input type="hidden"  name="photos" accept="image/png, image/jpeg" class="form-control input-sm" id="photos" th:field="*{photos}"/>
+	    <input type="file"  name="image" accept="image/png, image/jpeg" class="form-control input-sm"/>
+	    	<div class="alert alert-danger"  th:if="${#fields.hasErrors('photos')}" th:errors="*{photos'}"></div>
+	  </div> 
+	  
+	  
 	  <button type="submit" class="btn btn-primary">Ajouter article</button>
 	</form>
 	</div>
